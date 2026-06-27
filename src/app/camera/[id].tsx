@@ -17,6 +17,7 @@ import { getLocation } from '@/data/mock';
 import { addPhoto } from '@/lib/photoStore';
 import { Colors } from '@/constants/theme';
 import type { Photo } from '@/types';
+import { AnalyzingOverlay } from '@/components/AnalyzingOverlay';
 
 export default function CameraScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -29,6 +30,7 @@ export default function CameraScreen() {
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [aiTip, setAiTip] = useState<string>('');
+  const [analyzing, setAnalyzing] = useState(false);
 
   // Web 端相机 API 仅在安全上下文（HTTPS 或 localhost）可用。
   // GitHub Pages 自定义域名证书未就绪时站点走 HTTP，getUserMedia 会静默失败，
@@ -99,6 +101,7 @@ export default function CameraScreen() {
       if (photo?.uri) {
         setCapturedUri(photo.uri);
         setAiTip('Analyzing composition...'); // loading state
+        setAnalyzing(true);
         // async call the llm
         analyzeWithKeyLLM(photo.uri);
       } else {
@@ -154,6 +157,8 @@ export default function CameraScreen() {
     } catch (err) {
       console.error('analyzeWithKeyLLM failed:', err);
       setAiTip(cleanAnalysis); // fallback to demo result
+    } finally {
+      setAnalyzing(false);
     }
   };
 
@@ -226,7 +231,10 @@ export default function CameraScreen() {
   if (capturedUri) {
     return (
       <SafeAreaView style={styles.previewContainer}>
-        <Image source={{ uri: capturedUri }} style={styles.previewImage} resizeMode="contain" />
+        <View style={styles.previewImageWrap}>
+          <Image source={{ uri: capturedUri }} style={styles.previewImage} resizeMode="contain" />
+          <AnalyzingOverlay visible={analyzing} />
+        </View>
         <View style={styles.aiAnalysis}>
           <Text style={styles.aiTitle}>🤖 Gemini AI composition analysis</Text>
           <Text style={styles.aiText}>{aiTip}</Text>
@@ -455,6 +463,9 @@ const styles = StyleSheet.create({
   previewContainer: {
     flex: 1,
     backgroundColor: '#000',
+  },
+  previewImageWrap: {
+    flex: 1,
   },
   previewImage: {
     flex: 1,
