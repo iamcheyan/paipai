@@ -30,8 +30,8 @@ const buildMapHtml = (): string => {
 </head>
 <body>
   <div class="message">
-    <div class="title">需要 Google Maps Demo Key</div>
-    <div>请在 <code>src/.env</code> 配置 <code>EXPO_PUBLIC_GOOGLE_MAPS_API_KEY</code></div>
+    <div class="title">Google Maps Demo Key required</div>
+    <div>Set <code>EXPO_PUBLIC_GOOGLE_MAPS_API_KEY</code> in <code>src/.env</code></div>
   </div>
 </body>
 </html>`;
@@ -39,7 +39,7 @@ const buildMapHtml = (): string => {
 
   const markersJs = LOCATIONS.map((loc) => {
     const varName = `m_${loc.id.replace(/-/g, '_')}`;
-    const popupHtml = `<b>${loc.name}</b><br/>${loc.nameEn}<br/><a href="#" data-id="${loc.id}" style="color:#1A73E8;font-weight:700">查看榜单 ›</a>`;
+    const popupHtml = `<b>${loc.name}</b><br/>${loc.nameEn}<br/><a href="#" data-id="${loc.id}" style="color:#1A73E8;font-weight:700">View leaderboard ›</a>`;
     return `
       const ${varName} = new google.maps.Marker({
         position: { lat: ${loc.lat}, lng: ${loc.lng} },
@@ -124,14 +124,14 @@ export default function MapScreenWeb() {
   return (
     <View style={styles.container}>
       <View style={styles.hero}>
-        <Text style={styles.heroTitle}>发现拍照热点 (Web 预览)</Text>
-        <Text style={styles.heroSubtitle}>此地最佳角度 · 此地最佳大片</Text>
+        <Text style={styles.heroTitle}>Discover photo spots (Web preview)</Text>
+        <Text style={styles.heroSubtitle}>Best angles here · Best shots here</Text>
       </View>
 
       <View style={styles.map} ref={mapRef} />
 
       <View style={styles.list}>
-        <Text style={styles.listTitle}>附近热点</Text>
+        <Text style={styles.listTitle}>Nearby spots</Text>
         {LOCATIONS.map((loc) => (
           <Pressable
             key={loc.id}
@@ -147,7 +147,7 @@ export default function MapScreenWeb() {
               <Text style={styles.locationName}>{loc.name}</Text>
               <Text style={styles.locationNameEn}>{loc.nameEn}</Text>
               <Text style={styles.locationMeta}>
-                {loc.photoCount} 张大片 · 热度 {loc.hotScore}
+                {loc.photoCount} shots · Heat {loc.hotScore}
               </Text>
             </View>
             <Text style={styles.chevron}>›</Text>
