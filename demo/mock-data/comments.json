@@ -1,0 +1,15 @@
+[
+  {
+    "photoId": "photo-001",
+    "comments": [
+      { "userName": "路人甲", "text": "这个机位绝了，周末就去！", "createdAt": "2026-06-21T08:00:00Z" },
+      { "userName": "拍片达人", "text": "跟拍提示很准，省了好多时间", "createdAt": "2026-06-21T12:30:00Z" }
+    ]
+  },
+  {
+    "photoId": "photo-002",
+    "comments": [
+      { "userName": "上海土著", "text": "作为本地人第一次拍这么好看的外滩", "createdAt": "2026-06-20T16:00:00Z" }
+    ]
+  }
+]

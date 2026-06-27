@@ -1,0 +1,59 @@
+[
+  {
+    "id": "loc-shibuya-stream",
+    "name": "Google 涩谷办公室",
+    "nameEn": "Google Japan — Shibuya Stream",
+    "placeId": "",
+    "lat": 35.657167,
+    "lng": 139.703167,
+    "address": "3-chōme-21-3 Shibuya, Shibuya City, Tokyo 150-0002, Japan",
+    "addressJa": "東京都渋谷区渋谷3丁目21-3 渋谷ストリーム",
+    "photoCount": 24,
+    "hotScore": 100,
+    "isPrimaryDemo": true,
+    "coverImage": "demo/screenshots/shibuya-stream-cover.jpg",
+    "guide": {
+      "referenceImage": "demo/screenshots/shibuya-stream-reference.jpg",
+      "tips": [
+        "退后两步，把 Shibuya Stream 入口全貌收入画面",
+        "横屏或竖屏均可，建筑入口居中",
+        "拍摄时保持手机水平，天空占画面上 1/3",
+        "下午避免逆光，面向入口拍摄"
+      ],
+      "tipsJa": [
+        "2歩下がって、渋谷ストリームの入口全体を入れる",
+        "建物の入口を中央に",
+        "スマホを水平に保つ",
+        "逆光を避け、入口の方を向いて撮影"
+      ],
+      "targetPitch": 0,
+      "targetRoll": 0,
+      "targetHeading": 180
+    }
+  },
+  {
+    "id": "loc-shibuya-crossing",
+    "name": "涩谷十字路口",
+    "nameEn": "Shibuya Scramble Crossing",
+    "placeId": "",
+    "lat": 35.6595,
+    "lng": 139.7005,
+    "address": "Shibuya City, Tokyo, Japan",
+    "addressJa": "東京都渋谷区 渋谷スクランブル交差点",
+    "photoCount": 512,
+    "hotScore": 98,
+    "isPrimaryDemo": false,
+    "coverImage": "demo/screenshots/shibuya-crossing-cover.jpg",
+    "guide": {
+      "referenceImage": "demo/screenshots/shibuya-crossing-reference.jpg",
+      "tips": [
+        "站到二樓观景台或星巴克窗边",
+        "俯拍角度，十字人流占画面中心",
+        "夜景比白天更出片"
+      ],
+      "targetPitch": -15,
+      "targetRoll": 0,
+      "targetHeading": 0
+    }
+  }
+]
