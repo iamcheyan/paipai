@@ -245,7 +245,7 @@ export default function CameraScreen() {
 
   return (
     <View style={styles.container}>
-      <CameraView ref={cameraRef} style={styles.camera} facing={Platform.OS === 'web' ? 'front' : 'back'}>
+      <CameraView ref={cameraRef} style={styles.camera} facing="back">
         <SafeAreaView style={styles.overlay}>
           <Pressable style={styles.closeButton} onPress={() => router.back()}>
             <Text style={styles.closeText}>✕</Text>
