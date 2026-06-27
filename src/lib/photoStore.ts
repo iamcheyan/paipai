@@ -11,7 +11,15 @@ export function getPhotosForLocation(locationId: string): Photo[] {
       ...p,
       likes: likeOverrides.get(p.id) ?? p.likes,
     }))
-    .sort((a, b) => b.likes - a.likes)
+    .sort((a, b) => {
+      // 用户刚上传的本地图优先排在最前
+      if (a.isLocal !== b.isLocal) return a.isLocal ? -1 : 1;
+      // 同组内：本地按上传时间倒序，其余按点赞数倒序
+      if (a.isLocal && b.isLocal) {
+        return (b.createdAt ?? '').localeCompare(a.createdAt ?? '');
+      }
+      return b.likes - a.likes;
+    })
     .map((p, i) => ({ ...p, rank: i + 1 }));
 }
 
