@@ -27,7 +27,7 @@ export function PhotoCard({ photo }: Props) {
       ) : (
         <View style={styles.placeholder}>
           <Text style={styles.placeholderIcon}>📸</Text>
-          <Text style={styles.placeholderText}>样例大片</Text>
+          <Text style={styles.placeholderText}>Sample shot</Text>
         </View>
       )}
 

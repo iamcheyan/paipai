@@ -4,11 +4,11 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function NotFoundScreen() {
   return (
     <>
-      <Stack.Screen options={{ title: '页面不存在' }} />
+      <Stack.Screen options={{ title: 'Not Found' }} />
       <View style={styles.container}>
-        <Text style={styles.title}>这个页面不存在</Text>
+        <Text style={styles.title}>This page doesn't exist</Text>
         <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>返回首页</Text>
+          <Text style={styles.linkText}>Back to home</Text>
         </Link>
       </View>
     </>

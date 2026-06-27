@@ -19,7 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   return {
     ...config,
-    name: '拍拍',
+    name: 'Paipai',
     slug: 'paipai',
     version: '1.0.0',
     orientation: 'portrait',
@@ -33,8 +33,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         googleMapsApiKey: googleMapsIosKey,
       },
       infoPlist: {
-        NSCameraUsageDescription: '拍拍需要相机权限来帮你拍出大片',
-        NSLocationWhenInUseUsageDescription: '拍拍需要位置来显示附近拍照热点',
+        NSCameraUsageDescription: 'Paipai needs camera access to help you capture great shots',
+        NSLocationWhenInUseUsageDescription: 'Paipai needs your location to show nearby photo spots',
       },
     },
     android: {
@@ -57,7 +57,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       [
         'expo-camera',
         {
-          cameraPermission: '拍拍需要相机权限来帮你拍出大片',
+          cameraPermission: 'Paipai needs camera access to help you capture great shots',
         },
       ],
       [

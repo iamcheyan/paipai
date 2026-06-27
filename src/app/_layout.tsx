@@ -33,15 +33,15 @@ export default function RootLayout() {
               <Image
                 source={LOGO}
                 style={{ width: 32, height: 32, resizeMode: 'contain' }}
-                accessibilityLabel="拍拍"
+                accessibilityLabel="Paipai"
               />
             ),
           }}
         />
-        <Stack.Screen name="location/[id]" options={{ title: '地点榜单' }} />
+        <Stack.Screen name="location/[id]" options={{ title: 'Leaderboard' }} />
         <Stack.Screen
           name="camera/[id]"
-          options={{ title: '跟拍模式', headerShown: false, presentation: 'fullScreenModal' }}
+          options={{ title: 'Guided Shoot', headerShown: false, presentation: 'fullScreenModal' }}
         />
       </Stack>
     </>

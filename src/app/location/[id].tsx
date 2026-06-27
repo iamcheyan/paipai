@@ -26,7 +26,7 @@ export default function LocationScreen() {
   if (!location) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>地点不存在</Text>
+        <Text style={styles.errorText}>Location not found</Text>
       </View>
     );
   }
@@ -40,11 +40,11 @@ export default function LocationScreen() {
         <View style={styles.statsRow}>
           <View style={styles.stat}>
             <Text style={styles.statValue}>{photos.length}</Text>
-            <Text style={styles.statLabel}>大片</Text>
+            <Text style={styles.statLabel}>Shots</Text>
           </View>
           <View style={styles.stat}>
             <Text style={styles.statValue}>{location.hotScore}</Text>
-            <Text style={styles.statLabel}>热度</Text>
+            <Text style={styles.statLabel}>Heat</Text>
           </View>
         </View>
       </View>
@@ -54,12 +54,12 @@ export default function LocationScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => <PhotoCard photo={item} />}
-        ListHeaderComponent={<Text style={styles.listTitle}>此地榜单</Text>}
+        ListHeaderComponent={<Text style={styles.listTitle}>Leaderboard here</Text>}
       />
 
       <Pressable style={styles.fab} onPress={() => router.push(`/camera/${location.id}`)}>
         <Text style={styles.fabIcon}>📷</Text>
-        <Text style={styles.fabText}>跟拍</Text>
+        <Text style={styles.fabText}>Shoot</Text>
       </Pressable>
     </View>
   );

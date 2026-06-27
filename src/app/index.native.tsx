@@ -18,8 +18,8 @@ export default function MapScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.hero}>
-        <Text style={styles.heroTitle}>发现拍照热点</Text>
-        <Text style={styles.heroSubtitle}>此地最佳角度 · 此地最佳大片</Text>
+        <Text style={styles.heroTitle}>Discover photo spots</Text>
+        <Text style={styles.heroSubtitle}>Best angles here · Best shots here</Text>
       </View>
 
       <MapView
@@ -41,7 +41,7 @@ export default function MapScreen() {
       </MapView>
 
       <View style={styles.list}>
-        <Text style={styles.listTitle}>附近热点</Text>
+        <Text style={styles.listTitle}>Nearby spots</Text>
         {LOCATIONS.map((loc) => (
           <Pressable
             key={loc.id}
@@ -57,7 +57,7 @@ export default function MapScreen() {
               <Text style={styles.locationName}>{loc.name}</Text>
               <Text style={styles.locationNameEn}>{loc.nameEn}</Text>
               <Text style={styles.locationMeta}>
-                {loc.photoCount} 张大片 · 热度 {loc.hotScore}
+                {loc.photoCount} shots · Heat {loc.hotScore}
               </Text>
             </View>
             <Text style={styles.chevron}>›</Text>

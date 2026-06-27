@@ -4,8 +4,8 @@ import { View, Text, StyleSheet } from 'react-native';
 const MapViewWebStub = ({ children, style, ...props }) => {
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.text}>🗺️ 地图 (Web 占位符)</Text>
-      <Text style={styles.sub}>点击下方列表测试地点和跟拍</Text>
+      <Text style={styles.text}>🗺️ Map (Web placeholder)</Text>
+      <Text style={styles.sub}>Tap an item in the list below to try a spot and guided shoot</Text>
       {children}
     </View>
   );

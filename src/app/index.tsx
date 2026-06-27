@@ -11,7 +11,7 @@ const GOOGLE_MAPS_WEB_KEY =
   process.env.EXPO_PUBLIC_GOOGLE_MAPS_IOS_KEY ||
   process.env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_KEY ||
   process.env.EXPO_PUBLIC_GOOGLE_PLACES_KEY ||
-  '';
+  'AIzaSyBuQ07xzVWEvKhgn-sEVQ_FpxYoLqaCTuQ';
 
 const buildMapHtml = (): string => {
   if (!GOOGLE_MAPS_WEB_KEY || GOOGLE_MAPS_WEB_KEY.includes('REPLACE_WITH')) {
@@ -98,7 +98,7 @@ export default function MapScreenWeb() {
 
     const iframe = document.createElement('iframe') as HTMLIFrameElement;
     iframe.setAttribute('srcdoc', MAP_HTML);
-    iframe.setAttribute('title', '拍拍 地图');
+    iframe.setAttribute('title', 'Paipai Map');
     iframe.style.width = '100%';
     iframe.style.height = '100%';
     iframe.style.border = 'none';

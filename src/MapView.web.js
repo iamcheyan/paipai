@@ -4,9 +4,9 @@ import { View, Text, StyleSheet } from 'react-native';
 const MapViewWeb = ({ style, children, ...props }) => {
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.text}>🗺️ 地图 (Web 预览)</Text>
-      <Text style={styles.sub}>点击下方列表测试地点和跟拍</Text>
-      <Text style={styles.note}>完整地图在真机/模拟器上</Text>
+      <Text style={styles.text}>🗺️ Map (Web preview)</Text>
+      <Text style={styles.sub}>Tap an item in the list below to try a spot and guided shoot</Text>
+      <Text style={styles.note}>Full map available on device/emulator</Text>
       {children}
     </View>
   );

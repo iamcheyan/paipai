@@ -50,16 +50,16 @@ export default function CameraScreen() {
     if (!isSecure || !hasUserMedia) {
       setCameraUnavailable(
         !isSecure
-          ? '当前站点未启用 HTTPS，浏览器禁止调用相机。请通过 HTTPS 访问，或在本地开发环境使用。'
-          : '当前浏览器不支持相机 API。'
+          ? 'This site is not served over HTTPS, so the browser blocks camera access. Please use HTTPS, or run in a local dev environment.'
+          : 'This browser does not support the camera API.'
       );
     }
   }, []);
 
   // 干净的分析结果（真实效果，无任何 demo 标识）
-  const cleanAnalysis = `1. 建筑入口基本居中，但可以再往画面中央微调 5-10%。
-2. 手机略有倾斜，建议水平仪对齐地平线。
-3. 左侧天空占比约 40%，可降低相机角度让天空占上 1/3，突出入口主体。`;
+  const cleanAnalysis = `1. The entrance is roughly centered, but shift it 5-10% further toward the center of the frame.
+2. The phone is slightly tilted — use a level to align with the horizon.
+3. The sky occupies about 40% on the left. Lower the camera angle so the sky takes up the top third, making the entrance the main subject.`;
 
   // keyllm config (OpenAI compatible)
   // LLM 配置（keyllm / OpenAI compatible）
@@ -71,7 +71,7 @@ export default function CameraScreen() {
   if (!location) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>地点不存在</Text>
+        <Text style={styles.errorText}>Location not found</Text>
       </View>
     );
   }
@@ -98,7 +98,7 @@ export default function CameraScreen() {
       console.log('takePictureAsync result:', photo);
       if (photo?.uri) {
         setCapturedUri(photo.uri);
-        setAiTip('正在分析构图...'); // loading state
+        setAiTip('Analyzing composition...'); // loading state
         // async call the llm
         analyzeWithKeyLLM(photo.uri);
       } else {
@@ -118,7 +118,7 @@ export default function CameraScreen() {
         base64 = base64.split(',')[1] || base64;
       }
 
-      const prompt = `你是专业的摄影指导专家，专长建筑摄影。分析这张照片的构图，针对拍摄建筑入口给出3条具体改进建议，用中文，每条简短实用。重点考虑：建筑入口居中、手机水平、天空占画面上1/3、避免逆光、对齐参考区域。`;
+      const prompt = `You are a professional photography coach specializing in architectural photography. Analyze the composition of this photo and give 3 concrete, brief, actionable tips for shooting this building entrance. Focus on: centering the entrance, keeping the phone level, filling the top third with sky, avoiding backlight, and aligning with the reference frame.`;
 
       const res = await fetch(`${LLM_ENDPOINT}/chat/completions`, {
         method: 'POST',
@@ -164,13 +164,13 @@ export default function CameraScreen() {
     const newPhoto: Photo = {
       id: `photo-local-${Date.now()}`,
       locationId: id,
-      userName: '演示用户',
+      userName: 'Demo User',
       avatar: '',
       imageUrl: '',
       localUri: capturedUri,
       likes: 1,
       comments: 0,
-      caption: `在 ${location.name} 跟拍完成！`,
+      caption: `Guided shoot completed at ${location.name}!`,
       createdAt: new Date().toISOString(),
       rank: 1,
       isLocal: true,
@@ -190,15 +190,15 @@ export default function CameraScreen() {
         : null;
     return (
       <SafeAreaView style={styles.permissionContainer}>
-        <Text style={styles.permissionTitle}>相机不可用</Text>
+        <Text style={styles.permissionTitle}>Camera unavailable</Text>
         <Text style={styles.permissionText}>{cameraUnavailable}</Text>
         {httpsUrl ? (
           <Pressable style={styles.permissionButton} onPress={() => Linking.openURL(httpsUrl)}>
-            <Text style={styles.permissionButtonText}>切换到 HTTPS 访问</Text>
+            <Text style={styles.permissionButtonText}>Switch to HTTPS</Text>
           </Pressable>
         ) : null}
         <Pressable style={styles.backLink} onPress={() => router.back()}>
-          <Text style={styles.backLinkText}>返回</Text>
+          <Text style={styles.backLinkText}>Back</Text>
         </Pressable>
       </SafeAreaView>
     );
@@ -211,13 +211,13 @@ export default function CameraScreen() {
   if (!permission.granted) {
     return (
       <SafeAreaView style={styles.permissionContainer}>
-        <Text style={styles.permissionTitle}>需要相机权限</Text>
-        <Text style={styles.permissionText}>拍拍需要相机来帮你对齐黄金角度</Text>
+        <Text style={styles.permissionTitle}>Camera permission needed</Text>
+        <Text style={styles.permissionText}>Paipai needs the camera to help you align the golden angle</Text>
         <Pressable style={styles.permissionButton} onPress={requestPermission}>
-          <Text style={styles.permissionButtonText}>授权相机</Text>
+          <Text style={styles.permissionButtonText}>Grant camera access</Text>
         </Pressable>
         <Pressable style={styles.backLink} onPress={() => router.back()}>
-          <Text style={styles.backLinkText}>返回</Text>
+          <Text style={styles.backLinkText}>Back</Text>
         </Pressable>
       </SafeAreaView>
     );
@@ -228,15 +228,15 @@ export default function CameraScreen() {
       <SafeAreaView style={styles.previewContainer}>
         <Image source={{ uri: capturedUri }} style={styles.previewImage} resizeMode="contain" />
         <View style={styles.aiAnalysis}>
-          <Text style={styles.aiTitle}>🤖 Gemini AI 构图分析</Text>
+          <Text style={styles.aiTitle}>🤖 Gemini AI composition analysis</Text>
           <Text style={styles.aiText}>{aiTip}</Text>
         </View>
         <View style={[styles.previewActions, { justifyContent: 'space-between' }]}>
           <Pressable style={styles.secondaryButton} onPress={() => { setCapturedUri(null); setAiTip(''); }}>
-            <Text style={styles.secondaryButtonText}>重拍</Text>
+            <Text style={styles.secondaryButtonText}>Retake</Text>
           </Pressable>
           <Pressable style={styles.primaryButton} onPress={uploadPhoto} disabled={uploading}>
-            <Text style={styles.primaryButtonText}>{uploading ? '上传中…' : '上传榜单'}</Text>
+            <Text style={styles.primaryButtonText}>{uploading ? 'Uploading…' : 'Upload to leaderboard'}</Text>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -256,14 +256,14 @@ export default function CameraScreen() {
             <View style={[styles.corner, styles.cornerTR]} />
             <View style={[styles.corner, styles.cornerBL]} />
             <View style={[styles.corner, styles.cornerBR]} />
-            <Text style={styles.guideLabel}>参考构图区域</Text>
-            <Text style={styles.guideHint}>对齐建筑入口</Text>
+            <Text style={styles.guideLabel}>Reference frame</Text>
+            <Text style={styles.guideHint}>Align with the entrance</Text>
           </View>
 
           <Pressable style={styles.tipBar} onPress={cycleTip}>
-            <Text style={styles.tipLabel}>取景提示</Text>
+            <Text style={styles.tipLabel}>Framing tips</Text>
             <Text style={styles.tipText}>{currentTip}</Text>
-            <Text style={styles.tipTap}>点击切换下一条 ›</Text>
+            <Text style={styles.tipTap}>Tap to switch to the next tip ›</Text>
           </Pressable>
 
           <View style={styles.bottomBar}>
