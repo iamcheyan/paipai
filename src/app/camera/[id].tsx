@@ -1,6 +1,6 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Image,
   Pressable,
@@ -9,6 +9,7 @@ import {
   Text,
   View,
   Platform,
+  Linking,
 } from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 
@@ -28,6 +29,32 @@ export default function CameraScreen() {
   const [capturedUri, setCapturedUri] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [aiTip, setAiTip] = useState<string>('');
+
+  // Web 端相机 API 仅在安全上下文（HTTPS 或 localhost）可用。
+  // GitHub Pages 自定义域名证书未就绪时站点走 HTTP，getUserMedia 会静默失败，
+  // 导致点"授权相机"无反应。这里检测并提示用户。
+  const [cameraUnavailable, setCameraUnavailable] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const isSecure =
+      typeof window !== 'undefined' &&
+      (window.isSecureContext ||
+        window.location.protocol === 'https:' ||
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1');
+    const hasUserMedia =
+      typeof navigator !== 'undefined' &&
+      !!navigator.mediaDevices &&
+      typeof navigator.mediaDevices.getUserMedia === 'function';
+    if (!isSecure || !hasUserMedia) {
+      setCameraUnavailable(
+        !isSecure
+          ? '当前站点未启用 HTTPS，浏览器禁止调用相机。请通过 HTTPS 访问，或在本地开发环境使用。'
+          : '当前浏览器不支持相机 API。'
+      );
+    }
+  }, []);
 
   // 干净的分析结果（真实效果，无任何 demo 标识）
   const cleanAnalysis = `1. 建筑入口基本居中，但可以再往画面中央微调 5-10%。
@@ -153,6 +180,29 @@ export default function CameraScreen() {
     setUploading(false);
     router.replace(`/location/${id}`);
   };
+
+  if (cameraUnavailable) {
+    const httpsUrl =
+      Platform.OS === 'web' &&
+      typeof window !== 'undefined' &&
+      window.location.protocol === 'http:'
+        ? window.location.href.replace(/^http:/, 'https:')
+        : null;
+    return (
+      <SafeAreaView style={styles.permissionContainer}>
+        <Text style={styles.permissionTitle}>相机不可用</Text>
+        <Text style={styles.permissionText}>{cameraUnavailable}</Text>
+        {httpsUrl ? (
+          <Pressable style={styles.permissionButton} onPress={() => Linking.openURL(httpsUrl)}>
+            <Text style={styles.permissionButtonText}>切换到 HTTPS 访问</Text>
+          </Pressable>
+        ) : null}
+        <Pressable style={styles.backLink} onPress={() => router.back()}>
+          <Text style={styles.backLinkText}>返回</Text>
+        </Pressable>
+      </SafeAreaView>
+    );
+  }
 
   if (!permission) {
     return <View style={styles.center} />;
