@@ -1,11 +1,88 @@
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { LOCATIONS } from '@/data/mock';
 import { Colors } from '@/constants/theme';
 
+const GOOGLE_OFFICE = { lat: 35.657167, lng: 139.703167 };
+
+const buildMapHtml = (): string => {
+  const markersJs = LOCATIONS.map((loc) => {
+    const varName = `m_${loc.id.replace(/-/g, '_')}`;
+    const popupHtml = `<b>${loc.name}</b><br/>${loc.nameEn}<br/><a href="#" data-id="${loc.id}" style="color:#1A73E8;font-weight:700">查看榜单 ›</a>`;
+    return `
+      const ${varName} = L.marker([${loc.lat}, ${loc.lng}]).addTo(map);
+      ${varName}.bindPopup(${JSON.stringify(popupHtml)});`;
+  }).join('\n');
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>html,body,#map{margin:0;padding:0;height:100%;width:100%;}</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+  const map = L.map('map').setView([${GOOGLE_OFFICE.lat}, ${GOOGLE_OFFICE.lng}], 16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+${markersJs}
+  map.on('popupopen', (e) => {
+    const link = e.popup.getElement().querySelector('a[data-id]');
+    if (link) {
+      link.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        window.parent.postMessage({ type: 'paipai:goto', id: link.dataset.id }, '*');
+      });
+    }
+  });
+<\/script>
+</body>
+</html>`;
+};
+
+const MAP_HTML = buildMapHtml();
+
 export default function MapScreenWeb() {
   const router = useRouter();
+  const mapRef = useRef<View>(null);
+
+  useEffect(() => {
+    // @ts-ignore react-native-web exposes the underlying DOM node via ref
+    const host: any = mapRef.current;
+    if (!host || typeof document === 'undefined') return;
+
+    const iframe = document.createElement('iframe') as HTMLIFrameElement;
+    iframe.setAttribute('srcdoc', MAP_HTML);
+    iframe.setAttribute('title', '拍拍 地图');
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
+
+    // Remove any previously appended iframe (strict mode re-mount)
+    while (host.firstChild) host.removeChild(host.firstChild);
+    host.appendChild(iframe);
+
+    const onMessage = (e: MessageEvent) => {
+      const data = e.data as { type?: string; id?: string } | null;
+      if (data && data.type === 'paipai:goto' && data.id) {
+        router.push(`/location/${data.id}` as `/location/${string}`);
+      }
+    };
+    window.addEventListener('message', onMessage);
+
+    return () => {
+      window.removeEventListener('message', onMessage);
+      if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    };
+  }, [router]);
 
   return (
     <View style={styles.container}>
@@ -14,11 +91,7 @@ export default function MapScreenWeb() {
         <Text style={styles.heroSubtitle}>此地最佳角度 · 此地最佳大片</Text>
       </View>
 
-      <View style={[styles.map, styles.webMapPlaceholder]}>
-        <Text style={styles.webMapText}>🗺️ 地图预览 (Web 版本)</Text>
-        <Text style={styles.webMapSub}>点击下方列表中的地点查看详情</Text>
-        <Text style={styles.webMapNote}>完整地图和相机功能请在真机或模拟器上查看</Text>
-      </View>
+      <View style={styles.map} ref={mapRef} />
 
       <View style={styles.list}>
         <Text style={styles.listTitle}>附近热点</Text>
@@ -73,27 +146,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     borderRadius: 16,
     overflow: 'hidden',
-  },
-  webMapPlaceholder: {
     backgroundColor: '#e0f2fe',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  webMapText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#0369a1',
-  },
-  webMapSub: {
-    fontSize: 14,
-    color: '#64748b',
-    marginTop: 8,
-  },
-  webMapNote: {
-    fontSize: 12,
-    color: '#94a3b8',
-    marginTop: 4,
-    fontStyle: 'italic',
   },
   list: {
     flex: 1,
