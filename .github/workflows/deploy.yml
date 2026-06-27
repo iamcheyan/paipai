@@ -34,6 +34,14 @@ jobs:
         working-directory: src
         run: npx expo export -p web
 
+      - name: Regenerate favicon.ico from logo
+        working-directory: src/dist
+        run: |
+          python3 -c "
+          from PIL import Image
+          Image.open('../assets/images/favicon.png').convert('RGBA').save('favicon.ico', format='ICO', sizes=[(64,64),(48,48),(32,32),(16,16)])
+          "
+
       - name: Add CNAME for custom domain
         working-directory: src/dist
         run: echo "pp.iamcheyan.com" > CNAME

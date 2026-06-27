@@ -6,50 +6,14 @@ import { LOCATIONS } from '@/data/mock';
 import { Colors } from '@/constants/theme';
 
 const GOOGLE_OFFICE = { lat: 35.657167, lng: 139.703167 };
-const GOOGLE_MAPS_WEB_KEY =
-  process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ||
-  process.env.EXPO_PUBLIC_GOOGLE_MAPS_IOS_KEY ||
-  process.env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_KEY ||
-  process.env.EXPO_PUBLIC_GOOGLE_PLACES_KEY ||
-  '';
 
 const buildMapHtml = (): string => {
-  if (!GOOGLE_MAPS_WEB_KEY || GOOGLE_MAPS_WEB_KEY.includes('REPLACE_WITH')) {
-    return `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<style>
-  html,body{margin:0;padding:0;height:100%;width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#eef4ff;color:#1f2937;}
-  body{display:flex;align-items:center;justify-content:center;text-align:center;}
-  .message{padding:24px;line-height:1.6;}
-  .title{font-weight:800;margin-bottom:8px;}
-  code{font-size:12px;background:#fff;border:1px solid #dbe3f0;border-radius:6px;padding:2px 6px;}
-</style>
-</head>
-<body>
-  <div class="message">
-    <div class="title">需要 Google Maps Web API Key</div>
-    <div>请在 <code>src/.env</code> 配置 <code>EXPO_PUBLIC_GOOGLE_MAPS_API_KEY</code></div>
-  </div>
-</body>
-</html>`;
-  }
-
   const markersJs = LOCATIONS.map((loc) => {
     const varName = `m_${loc.id.replace(/-/g, '_')}`;
     const popupHtml = `<b>${loc.name}</b><br/>${loc.nameEn}<br/><a href="#" data-id="${loc.id}" style="color:#1A73E8;font-weight:700">查看榜单 ›</a>`;
     return `
-      const ${varName} = new google.maps.Marker({
-        position: { lat: ${loc.lat}, lng: ${loc.lng} },
-        map,
-        title: ${JSON.stringify(loc.name)}
-      });
-      ${varName}.addListener('click', () => {
-        infoWindow.setContent(${JSON.stringify(popupHtml)});
-        infoWindow.open({ anchor: ${varName}, map });
-      });`;
+      const ${varName} = L.marker([${loc.lat}, ${loc.lng}]).addTo(map);
+      ${varName}.bindPopup(${JSON.stringify(popupHtml)});`;
   }).join('\n');
 
   return `<!DOCTYPE html>
@@ -57,30 +21,29 @@ const buildMapHtml = (): string => {
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>html,body,#map{margin:0;padding:0;height:100%;width:100%;}</style>
 </head>
 <body>
 <div id="map"></div>
 <script>
-  function initMap() {
-    const map = new google.maps.Map(document.getElementById('map'), {
-      center: { lat: ${GOOGLE_OFFICE.lat}, lng: ${GOOGLE_OFFICE.lng} },
-      zoom: 16,
-      mapTypeControl: false,
-      streetViewControl: false,
-      fullscreenControl: false
-    });
-    const infoWindow = new google.maps.InfoWindow();
+  const map = L.map('map').setView([${GOOGLE_OFFICE.lat}, ${GOOGLE_OFFICE.lng}], 16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
 ${markersJs}
-  }
-  document.addEventListener('click', (ev) => {
-    const link = ev.target.closest && ev.target.closest('a[data-id]');
-    if (!link) return;
-    ev.preventDefault();
-    window.parent.postMessage({ type: 'paipai:goto', id: link.dataset.id }, '*');
+  map.on('popupopen', (e) => {
+    const link = e.popup.getElement().querySelector('a[data-id]');
+    if (link) {
+      link.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        window.parent.postMessage({ type: 'paipai:goto', id: link.dataset.id }, '*');
+      });
+    }
   });
 <\/script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_WEB_KEY)}&callback=initMap"></script>
 </body>
 </html>`;
 };

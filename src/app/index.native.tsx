@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from '../MapView';
+import MapView, { Marker } from '../MapView';
 
 import { LOCATIONS } from '@/data/mock';
 import { Colors } from '@/constants/theme';
@@ -24,7 +24,6 @@ export default function MapScreen() {
 
       <MapView
         style={styles.map}
-        provider={PROVIDER_GOOGLE}
         initialRegion={INITIAL_REGION}
         showsUserLocation
         showsMyLocationButton
