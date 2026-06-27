@@ -1,9 +1,12 @@
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { Colors } from '@/constants/theme';
+
+const LOGO = require('@/assets/images/icon.png');
 
 SplashScreen.preventAutoHideAsync();
 
@@ -23,7 +26,18 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: Colors.background },
         }}
       >
-        <Stack.Screen name="index" options={{ title: '拍拍' }} />
+        <Stack.Screen
+          name="index"
+          options={{
+            headerTitle: () => (
+              <Image
+                source={LOGO}
+                style={{ width: 32, height: 32, resizeMode: 'contain' }}
+                accessibilityLabel="拍拍"
+              />
+            ),
+          }}
+        />
         <Stack.Screen name="location/[id]" options={{ title: '地点榜单' }} />
         <Stack.Screen
           name="camera/[id]"
