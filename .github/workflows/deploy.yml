@@ -37,6 +37,7 @@ jobs:
       - name: Regenerate favicon.ico from logo
         working-directory: src/dist
         run: |
+          pip install pillow --quiet
           python3 -c "
           from PIL import Image
           Image.open('../assets/images/favicon.png').convert('RGBA').save('favicon.ico', format='ICO', sizes=[(64,64),(48,48),(32,32),(16,16)])
